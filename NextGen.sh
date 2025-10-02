@@ -5,14 +5,14 @@
 # Created by Javid
 # ==============================
 
-# Colors
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
-NC='\033[0m' # No Color
+NC='\033[0m' 
 
-# Logo
+
 logo() {
 clear
 echo -e "${CYAN}"
@@ -30,7 +30,7 @@ EOF
 echo -e "${NC}${YELLOW}       🚀 NextGen Server Optimizer v3 🚀${NC}\n"
 }
 
-# Menu
+
 menu() {
 echo -e "${CYAN}Select an option:${NC}"
 echo -e "${GREEN} 1) Run All + Xanmod Kernel${NC}"
@@ -40,10 +40,10 @@ echo -e "${GREEN} 4) System Optimizer${NC}"
 echo -e "${GREEN} 0) Exit${NC}\n"
 }
 
-# Placeholder Functions
+
 run_all() {
     echo -e "${YELLOW}[INFO] Running full optimization with Xanmod Kernel...${NC}"
-    # Call modules here
+  
     sleep 2
     echo -e "${GREEN}[SUCCESS] All tasks completed.${NC}"
 }
@@ -66,7 +66,7 @@ system_opt() {
     echo -e "${GREEN}[SUCCESS] System optimization completed.${NC}"
 }
 
-# Reboot prompt
+
 ask_reboot() {
     echo -e "\n${CYAN}Do you want to reboot now? (y/n)${NC}"
     read -r answer
@@ -78,7 +78,7 @@ ask_reboot() {
     fi
 }
 
-# Main Loop
+
 while true; do
     logo
     menu
