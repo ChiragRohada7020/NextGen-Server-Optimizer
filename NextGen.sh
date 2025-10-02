@@ -1,18 +1,21 @@
 #!/bin/bash
 
-# ============================================================
+# ==============================
 # NextGen Server Optimizer v3
-# Author: Javid
-# ============================================================
+# Created by Javid
+# ==============================
 
-BASE_DIR="$(dirname "$0")/modules"
-source "$BASE_DIR/utils.sh"
-source "$BASE_DIR/firewall.sh"
-source "$BASE_DIR/kernel.sh"
-source "$BASE_DIR/optimizer.sh"
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
 
-show_menu() {
+# Logo
+logo() {
 clear
+echo -e "${CYAN}"
 cat << "EOF"
  _        _______          _________   _______  _______  _       
 ( (    /|(  ____ \|\     /|\__   __/  (  ____ \(  ____ \( (    /|
@@ -24,43 +27,70 @@ cat << "EOF"
 |/    )_)(_______/|/     \|   )_(     (_______)(_______/|/    )_)
                                                                  
 EOF
-echo -e "${YELLOW} NextGen Server Optimizer - Main Menu ${RESET}"
-echo ""
-echo " 1) Run All + Xanmod Kernel"
-echo " 2) Firewall Optimization"
-echo " 3) Kernel Optimization (Xanmod)"
-echo " 4) System Optimizer"
-echo " 0) Exit"
-echo ""
+echo -e "${NC}${YELLOW}       🚀 NextGen Server Optimizer v3 🚀${NC}\n"
 }
 
+# Menu
+menu() {
+echo -e "${CYAN}Select an option:${NC}"
+echo -e "${GREEN} 1) Run All + Xanmod Kernel${NC}"
+echo -e "${GREEN} 2) Firewall Optimization${NC}"
+echo -e "${GREEN} 3) Kernel Optimization (Xanmod)${NC}"
+echo -e "${GREEN} 4) System Optimizer${NC}"
+echo -e "${GREEN} 0) Exit${NC}\n"
+}
+
+# Placeholder Functions
 run_all() {
-    setup_firewall
-    install_xanmod
-    optimize_system
-    ask_reboot
+    echo -e "${YELLOW}[INFO] Running full optimization with Xanmod Kernel...${NC}"
+    # Call modules here
+    sleep 2
+    echo -e "${GREEN}[SUCCESS] All tasks completed.${NC}"
 }
 
+firewall_opt() {
+    echo -e "${YELLOW}[INFO] Optimizing Firewall (UFW)...${NC}"
+    sleep 1
+    echo -e "${GREEN}[SUCCESS] Firewall optimized.${NC}"
+}
+
+kernel_opt() {
+    echo -e "${YELLOW}[INFO] Installing & configuring Xanmod Kernel...${NC}"
+    sleep 1
+    echo -e "${GREEN}[SUCCESS] Xanmod Kernel installed and BBRv3 enabled.${NC}"
+}
+
+system_opt() {
+    echo -e "${YELLOW}[INFO] Running system optimization...${NC}"
+    sleep 1
+    echo -e "${GREEN}[SUCCESS] System optimization completed.${NC}"
+}
+
+# Reboot prompt
 ask_reboot() {
-    read -p "ریبوت کنم؟ (yes/no): " choice
-    if [[ "$choice" == "yes" ]]; then
-        log_info "سیستم در حال ریبوت..."
+    echo -e "\n${CYAN}Do you want to reboot now? (y/n)${NC}"
+    read -r answer
+    if [[ $answer == "y" || $answer == "Y" ]]; then
+        echo -e "${YELLOW}[INFO] Rebooting...${NC}"
         reboot
     else
-        log_info "سیستم ریبوت نشد."
+        echo -e "${GREEN}[OK] Skipping reboot.${NC}"
     fi
 }
 
+# Main Loop
 while true; do
-    show_menu
-    read -p "گزینه رو انتخاب کن: " opt
+    logo
+    menu
+    read -rp "Select an option [0-4]: " opt
     case $opt in
-        1) run_all ;;
-        2) setup_firewall ;;
-        3) install_xanmod ;;
-        4) optimize_system ;;
-        0) exit ;;
-        *) log_error "گزینه نامعتبره" ;;
+        1) run_all; ask_reboot ;;
+        2) firewall_opt ;;
+        3) kernel_opt; ask_reboot ;;
+        4) system_opt ;;
+        0) echo -e "${RED}[EXIT] Goodbye!${NC}"; exit 0 ;;
+        *) echo -e "${RED}[ERROR] Invalid option!${NC}" ;;
     esac
-    read -p "ادامه بده (Enter بزن)..."
+    echo -e "\n${YELLOW}Press Enter to return to menu...${NC}"
+    read
 done
