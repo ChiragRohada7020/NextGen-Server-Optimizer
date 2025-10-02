@@ -14,6 +14,5 @@
 
 ## 📥 نصب و اجرا
 ```bash
-wget https://raw.githubusercontent.com/NextGen-Clouds/NextGen-Server-Optimizer/main/NextGen.sh
-chmod +x NextGen.sh
-sudo ./NextGen.sh
+wget "https://raw.githubusercontent.com/NextGen-Clouds/NextGen-Server-Optimizer/main/NextGen.sh" O- NextGen.sh && chmod +c NextGen.sh && bash NextGen.sh
+
