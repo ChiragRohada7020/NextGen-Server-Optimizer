@@ -1,22 +1,35 @@
-#!/bin/bash
-
-# ==============================
-# NextGen Server Optimizer v3
-# Created by Javid
-# ==============================
-
-
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[0;36m'
-NC='\033[0m' 
+#!/usr/bin/env bash
+# NextGen v4 - Main
+#Created by Javid
+set -euo pipefail
+BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/modules"
 
 
-logo() {
-clear
-echo -e "${CYAN}"
-cat << "EOF"
+if [[ "$EUID" -ne 0 ]]; then
+  echo "Run as root: sudo $0"
+  exit 1
+fi
+
+
+source "$BASE_DIR/utils.sh"
+
+
+source "$BASE_DIR/hosts_dns.sh"
+source "$BASE_DIR/update.sh"
+source "$BASE_DIR/packages.sh"
+source "$BASE_DIR/kernel.sh"
+source "$BASE_DIR/timezone.sh"
+source "$BASE_DIR/zram.sh"
+source "$BASE_DIR/sysctl.sh"
+source "$BASE_DIR/ssh.sh"
+source "$BASE_DIR/limits.sh"
+source "$BASE_DIR/ufw.sh"
+source "$BASE_DIR/performance.sh"
+source "$BASE_DIR/qol.sh"
+
+show_logo() {
+  echo -e "${CYAN}"
+  cat <<'EOF'
  _        _______          _________   _______  _______  _       
 ( (    /|(  ____ \|\     /|\__   __/  (  ____ \(  ____ \( (    /|
 |  \  ( || (    \/( \   / )   ) (     | (    \/| (    \/|  \  ( |
@@ -27,70 +40,78 @@ cat << "EOF"
 |/    )_)(_______/|/     \|   )_(     (_______)(_______/|/    )_)
                                                                  
 EOF
-echo -e "${NC}${YELLOW}       🚀 NextGen Server Optimizer v3 🚀${NC}\n"
+  echo -e "${NC}${YELLOW}       🚀 NextGen Server Optimizer v4 🚀${NC}\n"
 }
-
 
 menu() {
-echo -e "${CYAN}Select an option:${NC}"
-echo -e "${GREEN} 1) Run All + Xanmod Kernel${NC}"
-echo -e "${GREEN} 2) Firewall Optimization${NC}"
-echo -e "${GREEN} 3) Kernel Optimization (Xanmod)${NC}"
-echo -e "${GREEN} 4) System Optimizer${NC}"
-echo -e "${GREEN} 0) Exit${NC}\n"
+  clear
+  show_logo
+  echo -e "${CYAN}Select an option:${NC}"
+  echo -e "${GREEN} 1) Run All (Full) + XanMod${NC}"
+  echo -e "${GREEN} 2) Run All (without XanMod)${NC}"
+  echo -e "${GREEN} 3) Hosts & DNS${NC}"
+  echo -e "${GREEN} 4) Update & Clean${NC}"
+  echo -e "${GREEN} 5) Install Packages${NC}"
+  echo -e "${GREEN} 6) Install XanMod Kernel${NC}"
+  echo -e "${GREEN} 7) ZRAM (2GB)${NC}"
+  echo -e "${GREEN} 8) Sysctl Optimizations${NC}"
+  echo -e "${GREEN} 9) SSH Optimizations${NC}"
+  echo -e "${GREEN}10) Limits (ulimit)${NC}"
+  echo -e "${GREEN}11) UFW (SSH/80/443)${NC}"
+  echo -e "${GREEN}12) Performance Tweaks${NC}"
+  echo -e "${GREEN}13) QOL tweaks (aliases, motd)${NC}"
+  echo -e "${GREEN}0) Exit${NC}"
+  echo
+  read -rp "Select [0-13]: " opt
+  case "$opt" in
+    1)
+      fix_hosts_dns
+      update_system
+      install_packages
+      install_xanmod
+      set_timezone_from_ip
+      setup_zram
+      optimize_sysctl
+      optimize_ssh
+      optimize_limits
+      configure_ufw
+      performance_tweaks
+      apply_qol
+      ;;
+    2)
+      fix_hosts_dns
+      update_system
+      install_packages
+      set_timezone_from_ip
+      setup_zram
+      optimize_sysctl
+      optimize_ssh
+      optimize_limits
+      configure_ufw
+      performance_tweaks
+      apply_qol
+      ;;
+    3) fix_hosts_dns ;;
+    4) update_system ;;
+    5) install_packages ;;
+    6) install_xanmod ;;
+    7) setup_zram ;;
+    8) optimize_sysctl ;;
+    9) optimize_ssh ;;
+    10) optimize_limits ;;
+    11) configure_ufw ;;
+    12) performance_tweaks ;;
+    13) apply_qol ;;
+    0) exit 0 ;;
+    *) echo -e "${RED}Invalid option${NC}" ;;
+  esac
+
+  echo
+  read -rp "Press Enter to return to menu..."
+  menu
 }
 
 
-run_all() {
-    echo -e "${YELLOW}[INFO] Running full optimization with Xanmod Kernel...${NC}"
-  
-    sleep 2
-    echo -e "${GREEN}[SUCCESS] All tasks completed.${NC}"
-}
-
-firewall_opt() {
-    echo -e "${YELLOW}[INFO] Optimizing Firewall (UFW)...${NC}"
-    sleep 1
-    echo -e "${GREEN}[SUCCESS] Firewall optimized.${NC}"
-}
-
-kernel_opt() {
-    echo -e "${YELLOW}[INFO] Installing & configuring Xanmod Kernel...${NC}"
-    sleep 1
-    echo -e "${GREEN}[SUCCESS] Xanmod Kernel installed and BBRv3 enabled.${NC}"
-}
-
-system_opt() {
-    echo -e "${YELLOW}[INFO] Running system optimization...${NC}"
-    sleep 1
-    echo -e "${GREEN}[SUCCESS] System optimization completed.${NC}"
-}
+menu
 
 
-ask_reboot() {
-    echo -e "\n${CYAN}Do you want to reboot now? (y/n)${NC}"
-    read -r answer
-    if [[ $answer == "y" || $answer == "Y" ]]; then
-        echo -e "${YELLOW}[INFO] Rebooting...${NC}"
-        reboot
-    else
-        echo -e "${GREEN}[OK] Skipping reboot.${NC}"
-    fi
-}
-
-
-while true; do
-    logo
-    menu
-    read -rp "Select an option [0-4]: " opt
-    case $opt in
-        1) run_all; ask_reboot ;;
-        2) firewall_opt ;;
-        3) kernel_opt; ask_reboot ;;
-        4) system_opt ;;
-        0) echo -e "${RED}[EXIT] Goodbye!${NC}"; exit 0 ;;
-        *) echo -e "${RED}[ERROR] Invalid option!${NC}" ;;
-    esac
-    echo -e "\n${YELLOW}Press Enter to return to menu...${NC}"
-    read
-done
