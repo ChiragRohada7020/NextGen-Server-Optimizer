@@ -1,12 +1,10 @@
 #!/bin/bash
-source "$(dirname "$0")/utils.sh"
+SCRIPT_DIR=$(dirname "$0")
+. "$SCRIPT_DIR/utils.sh"
 
-update_system() {
-  echo -e "${CYAN}>>> Update & Upgrade & Clean${NC}"
-  run "apt update -y"
-  run "apt upgrade -y"
-  run "apt full-upgrade -y"
-  run "apt autoremove -y"
-  run "apt autoclean -y"
-  run "apt clean -y"
+update_upgrade() {
+    log "Starting: Update/Upgrade/Clean"
+    apt update -y && apt upgrade -y && apt full-upgrade -y
+    apt autoremove -y && apt autoclean -y && apt clean -y
+    log "Completed: Update/Upgrade/Clean"
 }
