@@ -1,3 +1,17 @@
+set -e
+
+# Clone repo if not exists
+if [ ! -d "/root/NextGen-Server-Optimizer" ]; then
+  echo "📦 Downloading NextGen Optimizer..."
+  git clone https://github.com/NextGen-Clouds/NextGen-Server-Optimizer.git /root/NextGen-Server-Optimizer >/dev/null 2>&1
+fi
+
+cd /root/NextGen-Server-Optimizer || exit 1
+
+chmod +x NextGen.sh
+
+echo "🚀 Running optimization..."
+bash NextGen.sh --auto
 cat > /tmp/nextgen_installer.sh <<'SH' && chmod +x /tmp/nextgen_installer.sh && sudo /tmp/nextgen_installer.sh
 #!/usr/bin/env bash
 set -euo pipefail
