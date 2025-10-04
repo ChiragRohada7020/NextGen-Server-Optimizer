@@ -3,6 +3,16 @@
 #Created by Javid
 set -euo pipefail
 BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/modules"
+if [[ $1 == "--auto" ]]; then
+    echo "Running full optimization automatically..."
+    source modules/update_system.sh
+    source modules/network_opt.sh
+    source modules/sysctl_opt.sh
+    source modules/hosts_dns.sh
+    source modules/cleaner.sh
+    echo -e "\n✅ All optimizations applied successfully!"
+    exit 0
+fi
 
 
 if [[ "$EUID" -ne 0 ]]; then
