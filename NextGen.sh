@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 # NextGen v4 - Main
 #Created by Javid
-set -euo pipefail
-BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/modules"
+set +u
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
 if [[ $1 == "--auto" ]]; then
     echo "Running full optimization automatically..."
-    source modules/update_system.sh
-    source modules/network_opt.sh
-    source modules/sysctl_opt.sh
-    source modules/hosts_dns.sh
-    source modules/cleaner.sh
+    source "$SCRIPT_DIR/modules/utils.sh"
+    source "$SCRIPT_DIR/modules/update_system.sh"
+    source "$SCRIPT_DIR/modules/network_opt.sh"
+    source "$SCRIPT_DIR/modules/sysctl_opt.sh"
+    source "$SCRIPT_DIR/modules/hosts_dns.sh"
+    source "$SCRIPT_DIR/modules/cleaner.sh"
     echo -e "\n✅ All optimizations applied successfully!"
     exit 0
 fi
